@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Loader } from '@googlemaps/js-api-loader';
 
 interface MapProps {
@@ -9,11 +9,19 @@ interface MapProps {
 const Map: React.FC<MapProps> = ({ center, zoom }) => {
   const mapRef = useRef<HTMLDivElement>(null);
   const mapInstanceRef = useRef<google.maps.Map | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+
+    if (!apiKey) {
+      setError('Google Maps API key is not configured');
+      return;
+    }
+
     const initMap = async () => {
       const loader = new Loader({
-        apiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY || '',
+        apiKey,
         version: 'weekly',
       });
 
@@ -38,12 +46,24 @@ const Map: React.FC<MapProps> = ({ center, zoom }) => {
           });
         }
       } catch (error) {
+        setError('Failed to load Google Maps');
         console.error('Error loading Google Maps:', error);
       }
     };
 
     initMap();
   }, [center, zoom]);
+
+  if (error) {
+    return (
+      <div className="w-full h-full flex items-center justify-center bg-gray-100 rounded-lg">
+        <div className="text-center p-6">
+          <p className="text-gray-600 mb-2">{error}</p>
+          <p className="text-sm text-gray-500">Please configure your Google Maps API key in the .env file</p>
+        </div>
+      </div>
+    );
+  }
 
   return <div ref={mapRef} className="w-full h-full rounded-lg shadow-lg" />;
 };
