@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Globe, Menu, X } from 'lucide-react';
+import { Globe, Menu, X, Plus } from 'lucide-react';
 import Map from './components/Map';
 import SearchBar from './components/SearchBar';
 import TripCard from './components/TripCard';
+import Navigation from './components/Navigation';
 
 function App() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -22,36 +23,32 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center py-4">
-            <div className="flex items-center space-x-2">
-              <Globe className="h-6 w-6 text-blue-600" />
-              <span className="text-xl font-bold text-gray-900">Wanderlust</span>
-            </div>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="lg:hidden"
-            >
-              {isMenuOpen ? (
-                <X className="h-6 w-6 text-gray-600" />
-              ) : (
-                <Menu className="h-6 w-6 text-gray-600" />
-              )}
-            </button>
-          </div>
-        </div>
-      </header>
+      <Navigation />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Left Sidebar */}
           <div className="lg:col-span-1 space-y-6">
+            <div className="flex items-center justify-between mb-6">
+              <h1 className="text-2xl font-bold text-gray-900">Travel Planner</h1>
+              <button className="flex items-center px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                <Plus className="w-4 h-4 mr-1" />
+                New Trip
+              </button>
+            </div>
+            
             <SearchBar onSearch={(query) => console.log(query)} />
-            <div className="space-y-4">
-              <h2 className="text-xl font-semibold text-gray-900">Your Trips</h2>
+            
+            <div className="bg-white rounded-xl p-6 shadow-sm">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-900">Your Trips</h2>
+                <select className="text-sm border rounded-md px-2 py-1">
+                  <option>All Trips</option>
+                  <option>Upcoming</option>
+                  <option>Past</option>
+                </select>
+              </div>
               <div className="space-y-4">
                 {trips.map((trip, index) => (
                   <TripCard key={index} {...trip} />
@@ -61,11 +58,17 @@ function App() {
           </div>
 
           {/* Map Section */}
-          <div className="lg:col-span-2 h-[calc(100vh-12rem)]">
-            <Map
-              center={{ lat: 48.8566, lng: 2.3522 }}
-              zoom={13}
-            />
+          <div className="lg:col-span-2">
+            <div className="bg-white p-4 rounded-xl shadow-sm mb-4">
+              <h2 className="text-lg font-semibold text-gray-900 mb-2">Interactive Map</h2>
+              <p className="text-sm text-gray-600">Explore destinations and plan your route</p>
+            </div>
+            <div className="h-[calc(100vh-16rem)] rounded-xl overflow-hidden shadow-sm">
+              <Map
+                center={{ lat: 48.8566, lng: 2.3522 }}
+                zoom={13}
+              />
+            </div>
           </div>
         </div>
       </main>
